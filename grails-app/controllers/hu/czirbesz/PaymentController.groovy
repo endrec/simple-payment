@@ -5,6 +5,8 @@ import hu.czirbesz.payment.Transaction
 
 class PaymentController {
 
+    def paymentService
+
     def index = {
         redirect(action: "transactions", params: params)
     }
@@ -24,21 +26,9 @@ class PaymentController {
     }
 
     def pay = {
-        if (params) {
+        if (params.pay == "Pay") {
             def transactionInstance = new Transaction(params)
-            if (transactionInstance.save(flush: true)) {
-                transactionInstance.sender.balance -= transactionInstance.amount
-                transactionInstance.receiver.balance += transactionInstance.amount
-                sendMail {
-                    to transactionInstance.sender.email
-                    subject "Your payment was successful"
-                    body "You have sent ${transactionInstance.amount} to ${transactionInstance.receiver.name}"
-                }
-                sendMail {
-                    to transactionInstance.receiver.email
-                    subject "Payment has arrived"
-                    body "You have received ${transactionInstance.amount} from ${transactionInstance.sender.name}"
-                }
+            if (paymentService.commitPayment(transactionInstance)) {
                 flash.message = "${message(code: 'default.created.message', args: [message(code: 'transaction.label', default: 'Transaction'), transactionInstance.id])}"
                 redirect(action: "transactions", params: [accountId: transactionInstance.sender.id])
             }

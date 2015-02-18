@@ -24,7 +24,7 @@
         <b>To:</b><g:select name="receiver.id" from="${hu.czirbesz.payment.Account.list()}" optionKey="id" value="${transactionInstance?.receiver?.id}"/>
         <br/>
         <b>Amount:</b><g:textField name="amount" value="${fieldValue(bean: transactionInstance, field: 'amount')}"/>
-        <b><g:submitButton name="transactions" value="Pay"/></b>
+        <b><g:submitButton name="pay" value="Pay"/></b>
     </g:form>
 </div>
 </body>
